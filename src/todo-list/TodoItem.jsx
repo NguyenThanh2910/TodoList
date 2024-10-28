@@ -1,27 +1,57 @@
 import React from 'react';
 
-const TodoItem = ({ todo, onRemove, onEdit, onToggle }) => {
+const TodoItem = ({
+  todo,
+  onRemove,
+  onEdit,
+  onToggle,
+  editingId,
+  loadingId,
+}) => {
   return (
-    <li className="flex items-center justify-between p-2 border rounded-md">
+    <li
+      className={`flex items-center justify-between p-2 border rounded-md ${
+        editingId === todo.id
+          ? 'bg-yellow-100 border-yellow-500'
+          : 'bg-white border-gray-300'
+      }`}
+    >
       <div className="flex items-center">
         <div
           className="cursor-pointer"
           onClick={() => onToggle(todo.id, todo.completed)}
         >
-          {todo.completed ? (
+          {loadingId === todo.id ? (
+            // Hiển thị spinner khi đang loading
+            <svg
+              className="animate-spin h-6 w-6 text-gray-500 mr-2"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              ></path>
+            </svg>
+          ) : todo.completed ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={1.5}
               stroke="currentColor"
               className="w-6 h-6 text-green-500 mr-2"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 12l4 4L20 6"
-              />
+              <path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
             </svg>
           ) : (
             <svg
@@ -43,18 +73,23 @@ const TodoItem = ({ todo, onRemove, onEdit, onToggle }) => {
         </span>
       </div>
       <div>
-        <button onClick={onEdit} className="text-blue-500 mr-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            className="w-5 h-5"
+        {!todo.completed && onEdit && (
+          <button
+            onClick={() => onEdit(todo.id)}
+            className="text-blue-500 mr-2"
           >
-            <path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-          </svg>
-        </button>
-        <button onClick={onRemove} className="text-red-500">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+            </svg>
+          </button>
+        )}
+        <button onClick={() => onRemove(todo.id)} className="text-red-500">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

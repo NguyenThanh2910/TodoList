@@ -22,6 +22,8 @@ function todoReducer(state = initialState, action) {
         ...state,
         todos: state.todos.filter((todo) => todo.id !== action.payload),
       };
+    case 'SET_EDITING_TODO':
+      return { ...state, editingTodoId: action.payload };
     case 'UPDATE_TODO':
       return {
         ...state,

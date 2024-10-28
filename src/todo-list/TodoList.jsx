@@ -20,11 +20,10 @@ const TodoList = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [todoToRemove, setTodoToRemove] = useState(null);
   const dispatch = useDispatch();
-
   const [currentPageUnfinished, setCurrentPageUnfinished] = useState(1);
   const [currentPageCompleted, setCurrentPageCompleted] = useState(1);
   const jobsPerPage = 10;
-
+  const [loadingId, setLoadingId] = useState(null);
   useEffect(() => {
     dispatch(fetchTodos());
   }, [dispatch]);
@@ -71,9 +70,11 @@ const TodoList = () => {
 
   const incompleteTodos = todos.filter((todo) => !todo.completed);
   const completedTodos = todos.filter((todo) => todo.completed);
-
   const handleToggle = (id, completed) => {
-    dispatch(toggleTodo(id, completed));
+    setLoadingId(id); // Bắt đầu loading
+    dispatch(toggleTodo(id, completed)).then(() => {
+      setLoadingId(null); // Kết thúc loading
+    });
   };
 
   const indexOfLastJobUnfinished = currentPageUnfinished * jobsPerPage;
@@ -126,7 +127,7 @@ const TodoList = () => {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                class="size-6"
+                className="size-6"
               >
                 <path d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
               </svg>
@@ -136,9 +137,9 @@ const TodoList = () => {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                class="size-6"
+                className="size-6"
               >
-                <path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                <path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
               </svg>
             )}
           </button>
@@ -160,6 +161,8 @@ const TodoList = () => {
                   onRemove={() => openModal(todo)}
                   onEdit={() => handleEditClick(todo)}
                   onToggle={handleToggle}
+                  editingId={editingId}
+                  loadingId={loadingId}
                 />
               ))}
             </ul>
@@ -195,7 +198,6 @@ const TodoList = () => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
                   stroke="currentColor"
                   className="size-3"
                 >
@@ -215,8 +217,8 @@ const TodoList = () => {
                   key={todo.id}
                   todo={todo}
                   onRemove={() => openModal(todo)}
-                  onEdit={() => handleEditClick(todo)}
                   onToggle={handleToggle}
+                  loadingId={loadingId}
                 />
               ))}
             </ul>
@@ -252,7 +254,6 @@ const TodoList = () => {
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
                   stroke="currentColor"
                   className="size-3"
                 >
@@ -263,6 +264,7 @@ const TodoList = () => {
           </div>
         </div>
         <Modal
+          ariaHideApp={false}
           isOpen={modalIsOpen}
           onRequestClose={closeModal}
           contentLabel="Confirm Delete"
