@@ -12,6 +12,7 @@ import {
 import TodoInput from './TodoInput';
 import TodoListDisplay from '../Item/TodoListDisplay';
 import DeleteModal from '../deleteModal/DeleteModal';
+import DropdownMenu from '../../loginPage/DropdownMenu';
 
 const TodoList = () => {
   const [newTodo, setNewTodo] = useState('');
@@ -84,7 +85,15 @@ const TodoList = () => {
     <div className="min-h-screen  bg-gray-100 flex items-center justify-center">
       <div className="w-full min-h-screen  max-w-4xl bg-white shadow-xl rounded-lg p-8 space-y-8">
         <ToastContainer />
-        <h1 className="text-2xl font-bold mb-4">Todo List</h1>
+        <div className="grid grid-cols-2 gap-8 p-8">
+          <div className="flex items-center justify-start space-y-3">
+            <h1 className="text-3xl font-bold">Todo List</h1>
+          </div>
+          <div className="flex items-center justify-end space-y-3">
+            <DropdownMenu />
+          </div>
+        </div>
+
         <TodoInput
           newTodo={newTodo}
           editingJob={editingJob}
