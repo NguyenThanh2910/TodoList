@@ -8,23 +8,32 @@ const TodoItem = ({
   editingId,
   loadingId,
 }) => {
+  const isEditing = editingId === todo.id;
   return (
     <li
       className={`flex items-center justify-between p-2 border rounded-md ${
-        editingId === todo.id
+        isEditing
           ? 'bg-yellow-100 border-yellow-500'
           : 'bg-white border-gray-300'
       }`}
     >
-      <div className="flex items-center">
+      <div className="flex items-center flex-grow">
+        <span
+          className={`whitespace-normal break-words max-w-44 sm:max-w-60 lg:max-w-72 ${
+            todo.completed ? 'line-through text-gray-500' : ''
+          }`}
+        >
+          {todo.Jobs}
+        </span>
+      </div>
+      <div className="flex items-center ml-auto">
         <div
-          className="cursor-pointer"
+          className="cursor-pointer mr-2"
           onClick={() => onToggle(todo.id, todo.completed)}
         >
           {loadingId === todo.id ? (
-            // Hiển thị spinner khi đang loading
             <svg
-              className="animate-spin h-6 w-6 text-gray-500 mr-2"
+              className="animate-spin h-6 w-6 text-gray-500"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -49,7 +58,7 @@ const TodoItem = ({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              className="w-6 h-6 text-green-500 mr-2"
+              className="w-6 h-6 text-yellow-500"
             >
               <path d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
             </svg>
@@ -58,26 +67,15 @@ const TodoItem = ({
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6 text-gray-400 mr-2"
+              className="w-6 h-6 text-green-500"
             >
-              <circle cx="12" cy="12" r="10" stroke="currentColor" />
+              <path d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
           )}
         </div>
-        <span
-          className={` ${todo.completed ? 'line-through text-gray-500' : ''}`}
-        >
-          {todo.Jobs}
-        </span>
-      </div>
-      <div>
         {!todo.completed && onEdit && (
-          <button
-            onClick={() => onEdit(todo.id)}
-            className="text-blue-500 mr-2"
-          >
+          <button onClick={() => onEdit(todo)} className="text-blue-500 mr-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
