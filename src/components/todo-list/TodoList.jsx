@@ -8,14 +8,15 @@ import {
   removeTodo,
   toggleTodo,
   updateTodo,
-} from '../../action/action';
-import TodoInput from './TodoInput';
-import TodoListDisplay from '../Item/TodoListDisplay';
-import DeleteModal from '../deleteModal/DeleteModal';
+} from 'action/action';
+import TodoInput from 'components/todo-list/TodoInput';
+import TodoListDisplay from 'components/item/TodoListDisplay';
+import DeleteModal from 'components/deleteModal/DeleteModal';
+import DropdownMenu from 'loginPage/DropdownMenu';
 
 const TodoList = () => {
   const [newTodo, setNewTodo] = useState('');
-  const { todos, loading, error } = useSelector((state) => state.todoReducer);
+  const { todos, loading, error } = useSelector((state) => state.todo);
   const [editingId, setEditingId] = useState(null);
   const [editingJob, setEditingJob] = useState('');
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -31,6 +32,16 @@ const TodoList = () => {
 
   const handleAddTodo = () => {
     if (newTodo.trim()) {
+      // Kiểm tra xem job đã tồn tại trong danh sách todos chưa
+      const isDuplicate = todos.some(
+        (todo) => todo.Jobs.toLowerCase() === newTodo.toLowerCase()
+      );
+
+      if (isDuplicate) {
+        toast.error('Todo already exists!');
+        return;
+      }
+
       dispatch(addTodo({ Jobs: newTodo, completed: false }));
       setNewTodo('');
       toast.success('Todo added successfully!');
@@ -72,6 +83,7 @@ const TodoList = () => {
     setLoadingId(id); // Bắt đầu loading
     dispatch(toggleTodo(id, completed)).then(() => {
       setLoadingId(null); // Kết thúc loading
+      toast.success('Todo change successfully!');
     });
   };
 
@@ -84,7 +96,15 @@ const TodoList = () => {
     <div className="min-h-screen  bg-gray-100 flex items-center justify-center">
       <div className="w-full min-h-screen  max-w-4xl bg-white shadow-xl rounded-lg p-8 space-y-8">
         <ToastContainer />
-        <h1 className="text-2xl font-bold mb-4">Todo List</h1>
+        <div className="grid grid-cols-2 gap-8 p-8">
+          <div className="flex items-center justify-start space-y-3">
+            <h1 className="text-3xl font-bold">Todo List</h1>
+          </div>
+          <div className="flex items-center justify-end space-y-3">
+            <DropdownMenu />
+          </div>
+        </div>
+
         <TodoInput
           newTodo={newTodo}
           editingJob={editingJob}

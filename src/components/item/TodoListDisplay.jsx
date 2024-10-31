@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import TodoItem from './TodoItem';
-import Pagination from '../pagination/Pagination';
+import TodoItem from 'components/item/TodoItem';
+import Pagination from 'components/pagination/Pagination';
 
 const TodoListDisplay = ({
   todos,
@@ -45,7 +45,7 @@ const TodoListDisplay = ({
             <TodoItem
               key={todo.id}
               todo={todo}
-              onRemove={openModal}
+              onRemove={() => openModal(todo)}
               onEdit={handleEditClick}
               onToggle={handleToggle}
               editingId={editingId} // Truyền editingId vào đây
