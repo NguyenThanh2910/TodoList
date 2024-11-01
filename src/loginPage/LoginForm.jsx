@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { login } from 'action/authActions';
+import { useNavigate, Link } from 'react-router-dom';
 import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
+import { login } from 'action/authActions';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -17,14 +15,10 @@ const LoginForm = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      setErrorMessage('Vui lòng nhập email và mật khẩu!');
-      return;
-    } else {
-      setErrorMessage('');
+    // Gọi API đăng nhập nếu email và mật khẩu hợp lệ
+    if (email && password) {
+      dispatch(login(email, password));
     }
-
-    dispatch(login(email, password));
   };
 
   useEffect(() => {
@@ -59,9 +53,10 @@ const LoginForm = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={`mt-1 w-full pl-10 pr-3 py-2 border ${
-                errorMessage || error ? 'border-red-500' : 'border-gray-300'
+                error ? 'border-red-500' : 'border-gray-300'
               } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder="you@example.com"
+              required
             />
           </div>
         </div>
@@ -71,7 +66,7 @@ const LoginForm = () => {
             htmlFor="password"
             className="block text-sm font-medium text-gray-700"
           >
-            Mật Khẩu
+            Password
           </label>
           <div className="relative">
             <LockClosedIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -81,14 +76,14 @@ const LoginForm = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={`mt-1 w-full pl-10 pr-3 py-2 border ${
-                errorMessage || error ? 'border-red-500' : 'border-gray-300'
+                error ? 'border-red-500' : 'border-gray-300'
               } rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
               placeholder="••••••••"
+              required
             />
           </div>
         </div>
 
-        {errorMessage && <p className="text-red-500 text-xs">{errorMessage}</p>}
         {error && <p className="text-red-500 text-xs">{error}</p>}
 
         <button
@@ -100,9 +95,15 @@ const LoginForm = () => {
         </button>
 
         <p className="text-center text-sm text-gray-600">
-          You do not have an account ?
+          Do you have an account?
           <Link to="/register" className="text-blue-600 hover:underline ml-2">
             Register
+          </Link>
+        </p>
+
+        <p className="text-center text-sm text-gray-600 mt-4">
+          <Link to="/forgot-password" className="text-blue-600 hover:underline">
+            Forgot Password
           </Link>
         </p>
       </form>

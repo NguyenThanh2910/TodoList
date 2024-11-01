@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import TodoInput from 'components/todo-list/TodoInput';
+import TodoListDisplay from 'components/item/TodoListDisplay';
+import DeleteModal from 'components/deleteModal/DeleteModal';
+import DropdownMenu from 'loginPage/DropdownMenu';
 import {
   addTodo,
   fetchTodos,
@@ -9,10 +13,7 @@ import {
   toggleTodo,
   updateTodo,
 } from 'action/action';
-import TodoInput from 'components/todo-list/TodoInput';
-import TodoListDisplay from 'components/item/TodoListDisplay';
-import DeleteModal from 'components/deleteModal/DeleteModal';
-import DropdownMenu from 'loginPage/DropdownMenu';
+
 
 const TodoList = () => {
   const [newTodo, setNewTodo] = useState('');

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { register } from 'action/authActions';
 import { useNavigate } from 'react-router-dom';
+import { register } from 'action/authActions';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -22,13 +22,13 @@ const Register = () => {
     e.preventDefault();
 
     if (!email || !password || !confirmPassword) {
-      setErrorMessage('Vui lòng nhập đầy đủ thông tin!');
+      setErrorMessage('Please enter complete information!');
       return;
     } else if (!isValidEmail(email)) {
-      setErrorMessage('Email không hợp lệ!');
+      setErrorMessage('Invalid email!');
       return;
     } else if (password !== confirmPassword) {
-      setErrorMessage('Mật khẩu không khớp!');
+      setErrorMessage('Passwords do not match!');
       return;
     } else {
       setErrorMessage('');
@@ -57,7 +57,7 @@ const Register = () => {
         className="w-full max-w-md bg-white rounded-lg shadow-md p-8 space-y-6"
       >
         <h2 className="text-3xl font-bold text-center text-blue-600">
-          Đăng Ký
+          Register account
         </h2>
 
         <div>
@@ -86,7 +86,7 @@ const Register = () => {
             htmlFor="password"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Mật Khẩu
+            Password
           </label>
           <input
             type="password"
@@ -107,7 +107,7 @@ const Register = () => {
             htmlFor="confirmPassword"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Xác Nhận Mật Khẩu
+            Confirm password
           </label>
           <input
             type="password"
@@ -132,8 +132,17 @@ const Register = () => {
           className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md transition duration-200"
           disabled={loading}
         >
-          {loading ? 'Đang đăng ký...' : 'Đăng Ký'}
+          {loading ? 'Loading...' : 'Register'}
         </button>
+        <p className="text-center text-sm text-gray-600 mt-4">
+          <button
+            type="button"
+            onClick={() => navigate('/login')}
+            className="text-blue-600 hover:underline focus:outline-none"
+          >
+            Back to Login page
+          </button>
+        </p>
       </form>
     </div>
   );

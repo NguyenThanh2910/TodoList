@@ -15,47 +15,30 @@ export const login = (email, password) => async (dispatch) => {
     );
 
     if (user) {
+      // Lưu userId vào localStorage
       localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userId', user.userId); // Lưu userId vào localStorage
+
+      // Gửi thông tin người dùng đến Redux
       dispatch({ type: 'LOGIN_SUCCESS', payload: user });
     } else {
       dispatch({
         type: 'LOGIN_FAILURE',
-        payload: 'Email hoặc mật khẩu không đúng!',
+        payload: 'Email or password is incorrect!',
       });
     }
   } catch (error) {
     dispatch({
       type: 'LOGIN_FAILURE',
-      payload: 'Có lỗi xảy ra trong quá trình đăng nhập!',
+      payload: 'An error occurred during login!',
     });
   }
 };
 export const logout = () => (dispatch) => {
   localStorage.removeItem('isLoggedIn'); // Xóa trạng thái đăng nhập khỏi localStorage
+  localStorage.removeItem('userId'); // Xóa userId khỏi localStorage
   dispatch({ type: 'LOGOUT' }); // Thay đổi trạng thái trong Redux
 };
-export const changePassword =
-  (userId, oldPassword, newPassword) => async (dispatch) => {
-    dispatch({ type: 'CHANGE_PASSWORD_REQUEST' });
-
-    try {
-      // Gọi API để thay đổi mật khẩu và lưu lại mật khẩu mới
-      const response = await axios.put(
-        `https://6715c7b733bc2bfe40bb1b32.mockapi.io/User/${userId}`,
-        { password: newPassword }
-      );
-
-      if (response.status === 200) {
-        dispatch({ type: 'CHANGE_PASSWORD_SUCCESS' });
-        alert('Đổi mật khẩu thành công!');
-      }
-    } catch (error) {
-      dispatch({
-        type: 'CHANGE_PASSWORD_FAILURE',
-        payload: error.message || 'Đã xảy ra lỗi khi đổi mật khẩu.',
-      });
-    }
-  };
 export const register = (email, password) => async (dispatch) => {
   dispatch({ type: 'REGISTER_REQUEST' });
 
@@ -71,7 +54,7 @@ export const register = (email, password) => async (dispatch) => {
     if (emailExists) {
       dispatch({
         type: 'REGISTER_FAILURE',
-        payload: 'Email đã tồn tại!',
+        payload: 'Email already exists!',
       });
       return;
     }
@@ -92,7 +75,7 @@ export const register = (email, password) => async (dispatch) => {
       const errorData = await response.json();
       dispatch({
         type: 'REGISTER_FAILURE',
-        payload: errorData.message || 'Đăng ký thất bại!',
+        payload: errorData.message || 'Registration failed!',
       });
       return;
     }
@@ -100,6 +83,88 @@ export const register = (email, password) => async (dispatch) => {
     const data = await response.json();
     dispatch({ type: 'REGISTER_SUCCESS', payload: data });
   } catch (error) {
-    dispatch({ type: 'REGISTER_FAILURE', payload: 'Có lỗi xảy ra!' });
+    dispatch({ type: 'REGISTER_FAILURE', payload: 'An error occurred!' });
+  }
+};
+export const changePassword =
+  (userId, oldPassword, newPassword) => async (dispatch) => {
+    dispatch({ type: 'CHANGE_PASSWORD_REQUEST' });
+
+    try {
+      const response = await axios.get(
+        `https://6715c7b733bc2bfe40bb1b32.mockapi.io/User`
+      );
+
+      // Kiểm tra mật khẩu cũ
+      const user = response.data.find((user) => user.userId === userId);
+
+      if (!user || user.password !== oldPassword) {
+        dispatch({
+          type: 'CHANGE_PASSWORD_FAILURE',
+          payload: 'Old password is incorrect!',
+        });
+        return;
+      }
+
+      // Nếu mật khẩu cũ đúng, gọi API để đổi mật khẩu
+      const updateResponse = await axios.put(
+        `https://6715c7b733bc2bfe40bb1b32.mockapi.io/User/${userId}`,
+        { password: newPassword }
+      );
+
+      dispatch({
+        type: 'CHANGE_PASSWORD_SUCCESS',
+        payload: updateResponse.data,
+      });
+    } catch (error) {
+      dispatch({
+        type: 'CHANGE_PASSWORD_FAILURE',
+        payload: 'An error occurred while changing password!',
+      });
+    }
+  };
+
+const generateRandomPassword = (length = 8) => {
+  const chars =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+  let password = '';
+  for (let i = 0; i < length; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return password;
+};
+
+export const forgotPassword = (email) => async (dispatch) => {
+  dispatch({ type: 'FORGOT_PASSWORD_REQUEST' });
+
+  try {
+    const newPassword = generateRandomPassword();
+    const response = await axios.get(
+      'https://6715c7b733bc2bfe40bb1b32.mockapi.io/User'
+    );
+    const user = response.data.find((user) => user.email === email);
+
+    if (user) {
+      await axios.put(
+        `https://6715c7b733bc2bfe40bb1b32.mockapi.io/User/${user.userId}`,
+        { password: newPassword }
+      );
+
+      dispatch({
+        type: 'FORGOT_PASSWORD_SUCCESS',
+        payload: 'New password created successfully!',
+      });
+      return newPassword; // Trả về mật khẩu mới
+    } else {
+      dispatch({
+        type: 'FORGOT_PASSWORD_FAILURE',
+        payload: 'Email does not exist!',
+      });
+    }
+  } catch (error) {
+    dispatch({
+      type: 'FORGOT_PASSWORD_FAILURE',
+      payload: 'An error occurred while sending the request!',
+    });
   }
 };

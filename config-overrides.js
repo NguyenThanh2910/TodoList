@@ -10,6 +10,7 @@ module.exports = override(
         '@store': './src/store',
         '@loginPage': './src/loginPage',
         '@reducers': './src/reducers',
+        '@email': './src/email',
       },
     },
   ])
